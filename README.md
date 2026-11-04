@@ -4,14 +4,12 @@
 [![Latest version](https://img.shields.io/packagist/v/spkm/duo-security)](https://packagist.org/packages/spkm/duo-security)
 [![PHP version](https://img.shields.io/packagist/php-v/spkm/duo-security)](https://packagist.org/packages/spkm/duo-security)
 
-A Laravel package for [Duo Security](https://duo.com)'s [Admin API](https://duo.com/docs/adminapi) and
-[Auth API](https://duo.com/docs/authapi), built with [Saloon](https://docs.saloon.dev). It has a request for every
-operation Duo documents, all 184 of them: users, groups, phones, tokens, bypass codes, integrations, policies,
-administrators, the logs, Trust Monitor, settings and branding on the Admin API, and the second factor itself on the
-Auth API. Each has a typed model for the records it answers with, every list and log pages itself, and every request
-is signed with Duo's HMAC-SHA512 signature from the very bytes that are sent. Resources are grouped as Duo's
-documentation groups the endpoints: `DuoSecurity::users()`, `DuoSecurity::phones()`, `DuoSecurity::logs()` and 22 more,
-with `DuoSecurity::auth()` for the Auth API.
+[Duo Security](https://duo.com)'s [Admin API](https://duo.com/docs/adminapi) and [Auth API](https://duo.com/docs/authapi)
+for Laravel, built on [Saloon](https://docs.saloon.dev).
+
+Every endpoint in Duo's documentation is covered (184 at the time of writing) and grouped the way the docs group them:
+`DuoSecurity::users()`, `DuoSecurity::phones()`, `DuoSecurity::logs()` and so on, with `DuoSecurity::auth()` for the
+Auth API. Responses come back as typed models, lists and logs page themselves, and request signing is handled for you.
 
 ```php
 use spkm\DuoSecurity\Facades\DuoSecurity;
