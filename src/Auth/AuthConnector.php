@@ -22,6 +22,11 @@ class AuthConnector extends DuoConnector
         $this->requestTimeout = max($this->requestTimeout, self::LONG_POLL_TIMEOUT);
     }
 
+    protected function refusedRequests(): string
+    {
+        return 'spkm\\DuoSecurity\\Admin\\Requests\\';
+    }
+
     /**
      * The Auth API's endpoints.
      */

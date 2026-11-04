@@ -12,6 +12,8 @@ class GetCustomMessagingRequest extends GetRequest
 {
     protected ?string $dto = CustomMessaging::class;
 
+    protected bool $cacheable = true;
+
     /**
      * @param  array<string, mixed>  $params  Any further parameters.
      */

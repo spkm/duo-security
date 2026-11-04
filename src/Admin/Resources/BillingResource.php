@@ -14,7 +14,7 @@ use spkm\DuoSecurity\Admin\Requests\Subaccounts\SetUserLimitRequest;
 use spkm\DuoSecurity\Resources\BaseResource;
 
 /**
- * The Subaccounts endpoints of the Admin API, from DuoSecurity::billing().
+ * The Subaccount Billing endpoints of the Admin API, from DuoSecurity::billing().
  */
 class BillingResource extends BaseResource
 {

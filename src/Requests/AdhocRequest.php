@@ -15,12 +15,14 @@ class AdhocRequest extends DuoRequest
 {
     /**
      * @param  array<string, mixed>  $parameters
+     * @param  array<string, string|int>  $segments  The values for the path's {placeholders}.
      */
     public function __construct(
         protected Method $method,
         protected string $path,
         protected array $parameters = [],
         string $shape = self::RAW,
+        protected array $segments = [],
     ) {
         $this->responseShape = $shape;
         $this->safe = $method === Method::GET;
@@ -28,7 +30,7 @@ class AdhocRequest extends DuoRequest
 
     public function resolveEndpoint(): string
     {
-        return Path::api($this->path);
+        return Path::api($this->path, $this->segments);
     }
 
     /**

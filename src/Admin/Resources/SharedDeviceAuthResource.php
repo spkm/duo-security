@@ -12,7 +12,7 @@ use spkm\DuoSecurity\Query\ListQuery;
 use spkm\DuoSecurity\Resources\BaseResource;
 
 /**
- * The Desktop Authenticators endpoints of the Admin API, from DuoSecurity::sharedDeviceAuth().
+ * The Shared Device Authentication endpoints of the Admin API, from DuoSecurity::sharedDeviceAuth().
  */
 class SharedDeviceAuthResource extends BaseResource
 {

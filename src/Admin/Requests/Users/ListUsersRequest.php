@@ -16,6 +16,8 @@ class ListUsersRequest extends ListRequest
 
     protected int $maxPageSize = 300;
 
+    protected bool $cacheable = true;
+
     public function resolveEndpoint(): string
     {
         return '/admin/v1/users';

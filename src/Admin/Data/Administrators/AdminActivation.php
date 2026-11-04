@@ -10,6 +10,8 @@ use spkm\DuoSecurity\Data\Data;
  */
 readonly class AdminActivation extends Data
 {
+    protected const HIDDEN = ['code', 'link'];
+
     /**
      * @param  array<string, mixed>  $extra
      */

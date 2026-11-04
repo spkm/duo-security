@@ -1,12 +1,12 @@
 <?php
 
 use Illuminate\Support\Collection;
-use Saloon\Http\Faking\MockResponse;
 use spkm\DuoSecurity\Admin\Resources\HasResources;
 use spkm\DuoSecurity\Auth\Resources\AuthResource;
 use spkm\DuoSecurity\Query\ListQuery;
 use spkm\DuoSecurity\Query\LogQuery;
 use spkm\DuoSecurity\Requests\DuoRequest;
+use spkm\DuoSecurity\Requests\LogRequest;
 use spkm\DuoSecurity\Resources\BaseResource;
 use spkm\DuoSecurity\Tests\Helpers\FakeDuo;
 
@@ -85,8 +85,7 @@ it('calls every resource method against a faked Duo, each sending its request', 
             $returns = $method->getReturnType()?->getName();
             $mockClient = FakeDuo::respondWith([FakeDuo::BASE_URL.'/*' => match (true) {
                 $returns === ListQuery::class, $returns === LogQuery::class, $returns === Collection::class => FakeDuo::page([['user_id' => 'DU1']]),
-                $returns === 'string' => MockResponse::make('PNG', 200, ['Content-Type' => 'image/png']),
-                $returns === 'mixed' => FakeDuo::ok('string answer'),
+                $returns === 'string', $returns === 'mixed' => FakeDuo::ok('string answer'),
                 $returns === 'bool' => FakeDuo::ok(''),
                 default => FakeDuo::ok(['user_id' => 'DU1']),
             }]);
@@ -99,14 +98,20 @@ it('calls every resource method against a faked Duo, each sending its request', 
 
             $recorded = $mockClient->getRecordedResponses();
 
+            $finder = str_contains((string) $method->getFileName(), '/Concerns/');
+
             expect($recorded)->toHaveCount(1, "$resourceClass::{$method->getName()}()")
                 ->and($recorded[0]->getRequest())->toBeInstanceOf(DuoRequest::class)
                 ->and($byClass->has($recorded[0]->getRequest()::class))->toBeTrue()
+                ->and($finder || class_basename($recorded[0]->getRequest()) === ucfirst($method->getName()).'Request')->toBeTrue("$resourceClass::{$method->getName()}() sent ".class_basename($recorded[0]->getRequest()))
                 ->and($result)->not->toBeNull("$resourceClass::{$method->getName()}()");
 
             $query = $recorded[0]->getPsrRequest()->getUri()->getQuery();
 
-            if ($returns === ListQuery::class || $returns === LogQuery::class) {
+            $request = $recorded[0]->getRequest();
+            $pagedByTime = $request instanceof LogRequest && $request->pagedBy() === LogRequest::BY_TIME;
+
+            if (($returns === ListQuery::class || $returns === LogQuery::class) && ! $pagedByTime) {
                 expect($query)->toContain('limit=2');
             }
         }

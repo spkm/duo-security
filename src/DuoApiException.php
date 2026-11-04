@@ -36,7 +36,7 @@ class DuoApiException extends RequestException
             in_array($status, [401, 403], true) => new UnauthorizedException($response),
             $status === 429 => new RateLimitedException($response),
             in_array($status, [400, 405, 406, 409, 412, 415, 422], true) => new InvalidRequestException($response),
-            $status === 408 || $status >= 500 || $response->successful() => new ServerErrorException($response),
+            $status === 408 || $status >= 500 || ($status >= 200 && $status < 300) => new ServerErrorException($response),
             default => new self($response),
         };
     }
@@ -92,7 +92,7 @@ class DuoApiException extends RequestException
         $message = Envelope::message($response);
         $detail = Envelope::messageDetail($response);
 
-        if ($message === null && $response->successful()) {
+        if ($message === null && $response->status() >= 200 && $response->status() < 300) {
             return $text.' without the OK envelope expected';
         }
 
@@ -110,12 +110,13 @@ class DuoApiException extends RequestException
     }
 
     /**
-     * Server text fit for a message or a log line: tags and control characters out, one line, at most 200
-     * characters.
+     * Server text fit for a message or a log line: valid UTF-8, tags, control and format characters (bidi
+     * overrides, zero-width spaces) out, one line, at most 200 characters.
      */
     protected static function clean(string $value): string
     {
-        $value = trim((string) preg_replace('/\s+/u', ' ', (string) preg_replace('/[\x00-\x1F\x7F]+/u', ' ', strip_tags($value))));
+        $value = mb_scrub($value, 'UTF-8');
+        $value = trim((string) preg_replace('/\s+/u', ' ', (string) preg_replace('/[\p{Cc}\p{Cf}]+/u', ' ', strip_tags($value))));
 
         return mb_strlen($value) > 200 ? mb_substr($value, 0, 197).'...' : $value;
     }

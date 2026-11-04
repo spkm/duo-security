@@ -135,7 +135,8 @@ class ListQuery
     }
 
     /**
-     * How many records there are in all, from the total Duo gives with a page.
+     * How many records there are in all: from the total Duo gives with a page, or by reading every page when an
+     * endpoint gives none (Trust Monitor's events).
      */
     public function count(): int
     {
@@ -146,9 +147,13 @@ class ListQuery
         }
 
         try {
-            return Envelope::total($response) ?? count(Envelope::items($response, $this->toRequest()->itemsKey()));
+            $total = Envelope::total($response);
+            $items = Envelope::items($response, $this->toRequest()->itemsKey());
+            $more = Envelope::nextOffset($response) !== null;
         } catch (JsonException) {
             throw new ServerErrorException($response);
         }
+
+        return $total ?? ($more ? $this->lazy()->count() : count($items));
     }
 }

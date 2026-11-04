@@ -78,6 +78,11 @@ class DuoSecurityService
     private function credentials(string $api, ?string $connection): Credentials
     {
         $config = $this->config($api, $connection);
+
+        if ($api === 'auth' && empty($config['api_hostname'])) {
+            $config['api_hostname'] = $this->config('admin', $connection)['api_hostname'] ?? null;
+        }
+
         $describe = ($connection === null ? 'The default Duo connection' : 'The Duo connection "'.$connection.'"').'\'s '.($api === 'admin' ? 'Admin API' : 'Auth API');
         $setting = fn (string $key): ?string => is_string($config[$key] ?? null) && $config[$key] !== '' ? $config[$key] : null;
 

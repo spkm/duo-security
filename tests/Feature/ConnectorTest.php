@@ -22,7 +22,7 @@ it('talks to Duo at https://{api hostname}, however the hostname is written', fu
 
     expect($connector->resolveBaseUrl())->toBe(FakeDuo::BASE_URL)
         ->and($connector->credentials()->apiHostname)->toBe(FakeDuo::HOST)
-        ->and($connector->credentialsFingerprint())->toBe(hash('sha256', FakeDuo::HOST.'|'.FakeDuo::INTEGRATION_KEY));
+        ->and($connector->credentialsFingerprint())->toBe($connector->credentials()->fingerprint());
 })->with([FakeDuo::HOST, 'https://'.FakeDuo::HOST.'/', strtoupper(FakeDuo::HOST)]);
 
 it('contacts nobody when a connector is built', function () {

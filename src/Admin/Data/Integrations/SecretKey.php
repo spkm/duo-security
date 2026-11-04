@@ -9,6 +9,8 @@ use spkm\DuoSecurity\Data\Data;
  */
 readonly class SecretKey extends Data
 {
+    protected const HIDDEN = ['skey'];
+
     /**
      * @param  array<string, mixed>  $extra
      */

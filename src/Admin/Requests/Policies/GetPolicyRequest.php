@@ -15,6 +15,8 @@ class GetPolicyRequest extends GetRequest
 {
     protected ?string $dto = Policy::class;
 
+    protected bool $cacheable = true;
+
     /**
      * @param  array<string, mixed>  $params  Any further parameters.
      */

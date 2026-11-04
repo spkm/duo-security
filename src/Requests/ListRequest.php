@@ -18,8 +18,6 @@ abstract class ListRequest extends DuoRequest implements Paginatable
 
     protected string $responseShape = self::LIST;
 
-    protected bool $cacheable = true;
-
     /**
      * The most records the endpoint returns at once.
      */

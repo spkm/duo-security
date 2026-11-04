@@ -13,6 +13,8 @@ class GetSharedDeviceAuthConfigurationRequest extends GetRequest
 {
     protected ?string $dto = SharedDeviceAuth::class;
 
+    protected bool $cacheable = true;
+
     /**
      * @param  array<string, mixed>  $params  Any further parameters.
      */

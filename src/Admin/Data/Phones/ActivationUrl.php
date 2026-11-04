@@ -9,6 +9,8 @@ use spkm\DuoSecurity\Data\Data;
  */
 readonly class ActivationUrl extends Data
 {
+    protected const HIDDEN = ['activation_url', 'activation_barcode', 'installation_url'];
+
     /**
      * @param  array<string, mixed>  $extra
      */

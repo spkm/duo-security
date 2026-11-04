@@ -15,7 +15,7 @@ use spkm\DuoSecurity\Query\ListQuery;
 use spkm\DuoSecurity\Resources\BaseResource;
 
 /**
- * The U2F Tokens endpoints of the Admin API, from DuoSecurity::tokens(). Beside the endpoints' own methods, find() gives a record by id, or null.
+ * The Hardware Tokens endpoints of the Admin API, from DuoSecurity::tokens(). Beside the endpoints' own methods, find() gives a record by id, or null.
  */
 class TokensResource extends BaseResource
 {

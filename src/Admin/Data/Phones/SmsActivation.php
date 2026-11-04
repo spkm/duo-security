@@ -9,6 +9,8 @@ use spkm\DuoSecurity\Data\Data;
  */
 readonly class SmsActivation extends Data
 {
+    protected const HIDDEN = ['activation_barcode'];
+
     /**
      * @param  array<string, mixed>  $extra
      */

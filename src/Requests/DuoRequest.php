@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Cache;
 use JsonException;
 use Saloon\CachePlugin\Contracts\Cacheable;
 use Saloon\CachePlugin\Contracts\Driver;
-use Saloon\CachePlugin\Drivers\LaravelCacheDriver;
 use Saloon\CachePlugin\Traits\HasCaching;
 use Saloon\Enums\Method;
 use Saloon\Http\PendingRequest;
@@ -18,6 +17,7 @@ use spkm\DuoSecurity\DuoApiException;
 use spkm\DuoSecurity\DuoConnector;
 use spkm\DuoSecurity\Exceptions\ServerErrorException;
 use spkm\DuoSecurity\Support\Envelope;
+use spkm\DuoSecurity\Support\JsonCacheDriver;
 use spkm\DuoSecurity\Support\QueryString;
 use Throwable;
 
@@ -55,6 +55,15 @@ abstract class DuoRequest extends Request implements Cacheable
      */
     protected ?string $itemsKey = null;
 
+    /**
+     * The parameters that are secrets, which a dump of a request shows redacted.
+     */
+    public const SENSITIVE_PARAMETERS = ['secret', 'aes_key', 'private_id', 'passcode', 'password', 'trusted_device_token', 'codes', 'logo', 'activation_code'];
+
+    /**
+     * Whether a GET's answer may be cached when duo-security.cache is on: only a request for records that don't
+     * change under it (a user, a group, a phone), never one that carries a secret, polls a status, or reads a log.
+     */
     protected bool $cacheable = false;
 
     protected bool $safe = true;
@@ -81,7 +90,7 @@ abstract class DuoRequest extends Request implements Cacheable
 
     public function resolveCacheDriver(): Driver
     {
-        return new LaravelCacheDriver(Cache::store(config('duo-security.cache.store')));
+        return new JsonCacheDriver(Cache::store(config('duo-security.cache.store')));
     }
 
     public function cacheExpiryInSeconds(): int
@@ -110,6 +119,24 @@ abstract class DuoRequest extends Request implements Cacheable
     }
 
     /**
+     * Whether Duo's answer is a failure: an error status, or a 2xx that is not an OK envelope (a FAIL Duo sent
+     * with a 200, a body that is not JSON), so that throw(), dtoOrFail(), the cache and retries all agree with
+     * dto(). A file (a logo) is read by its status alone.
+     */
+    public function hasRequestFailed(Response $response): ?bool
+    {
+        if ($response->status() < 200 || $response->status() >= 300) {
+            return true;
+        }
+
+        if ($this->responseShape === self::TEXT) {
+            return false;
+        }
+
+        return ! Envelope::succeeded($response);
+    }
+
+    /**
      * The exception for an error answer, so that $response->throw() (and the paginator, which calls it) gives
      * Duo's own exception classes rather than Saloon's.
      */
@@ -119,11 +146,12 @@ abstract class DuoRequest extends Request implements Cacheable
     }
 
     /**
-     * Whether the request can be retried without a second thought: a GET that changes nothing.
+     * Whether the request can be retried without a second thought: a GET, or a POST that only reads (the
+     * subaccount list, an enrollment status), which says so with $safe.
      */
     public function isSafe(): bool
     {
-        return $this->safe && $this->getMethod() === Method::GET;
+        return $this->safe && ($this->getMethod() === Method::GET || $this->getMethod() === Method::POST);
     }
 
     /**
@@ -142,6 +170,41 @@ abstract class DuoRequest extends Request implements Cacheable
     public function itemsKey(): ?string
     {
         return $this->itemsKey;
+    }
+
+    /**
+     * What a dump shows: the request with its secret parameters redacted.
+     *
+     * @return array<string, mixed>
+     */
+    public function __debugInfo(): array
+    {
+        $properties = get_object_vars($this);
+
+        foreach (['params', 'payload'] as $name) {
+            if (is_array($properties[$name] ?? null)) {
+                $properties[$name] = self::redact($properties[$name]);
+            }
+        }
+
+        return $properties;
+    }
+
+    /**
+     * Parameters with the secrets among them replaced by "[redacted]".
+     *
+     * @param  array<string, mixed>  $parameters
+     * @return array<string, mixed>
+     */
+    public static function redact(array $parameters): array
+    {
+        foreach ($parameters as $key => $value) {
+            if (in_array($key, self::SENSITIVE_PARAMETERS, true) && $value !== null) {
+                $parameters[$key] = '[redacted]';
+            }
+        }
+
+        return $parameters;
     }
 
     /**

@@ -12,6 +12,8 @@ class GetDraftBrandingRequest extends GetRequest
 {
     protected ?string $dto = Branding::class;
 
+    protected bool $cacheable = true;
+
     /**
      * @param  array<string, mixed>  $params  Any further parameters.
      */

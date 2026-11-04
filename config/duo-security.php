@@ -45,7 +45,9 @@ return [
     ],
 
     'cache' => [
-        // Cache the answers to GET requests for records, per account and application.
+        // Cache the answers to reads of records that don't change under the reader (users, groups, phones, tokens,
+        // policies, settings...), per application; never a secret, a status being polled, a report, a log or the
+        // Auth API. Entries are JSON, keyed with the application's keys, for cache.seconds.
         'enabled' => env('DUO_CACHE', false),
         'store' => env('DUO_CACHE_STORE'),
         'seconds' => 3600,

@@ -14,8 +14,6 @@ abstract class GetRequest extends DuoRequest
 
     protected string $responseShape = self::ONE;
 
-    protected bool $cacheable = true;
-
     /** @var array<string, mixed> */
     protected array $params = [];
 

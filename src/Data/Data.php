@@ -167,6 +167,24 @@ abstract readonly class Data implements JsonSerializable
     }
 
     /**
+     * What a dump shows: every property, with the secrets (HIDDEN) redacted.
+     *
+     * @return array<string, mixed>
+     */
+    public function __debugInfo(): array
+    {
+        $values = get_object_vars($this);
+
+        foreach (static::HIDDEN as $name) {
+            if (($values[$name] ?? null) !== null) {
+                $values[$name] = '[hidden]';
+            }
+        }
+
+        return $values;
+    }
+
+    /**
      * A model's constructor parameters, read once per class. (A readonly class can't have static properties, so the
      * cache is a static variable.)
      *
@@ -236,7 +254,7 @@ abstract readonly class Data implements JsonSerializable
             $typeName === 'int' => is_numeric($value) ? (int) $value : null,
             $typeName === 'float' => is_numeric($value) ? (float) $value : null,
             $typeName === 'bool' => is_bool($value) ? $value : filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
-            $typeName === 'string' => is_scalar($value) ? (string) $value : null,
+            $typeName === 'string' => is_bool($value) ? ($value ? 'true' : 'false') : (is_scalar($value) ? (string) $value : null),
             $typeName === 'array' => is_array($value) ? $value : null,
             $typeName === CarbonImmutable::class => static::date($value),
             is_subclass_of($typeName, self::class) => is_array($value) ? $typeName::from($value) : null,

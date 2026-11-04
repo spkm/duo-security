@@ -13,6 +13,8 @@ readonly class PreauthResult extends Data
 {
     protected const LISTS = ['devices' => Device::class];
 
+    protected const HIDDEN = ['verification_code'];
+
     /**
      * @param  Collection<int, Device>|null  $devices
      * @param  array<string, mixed>  $extra

@@ -16,6 +16,8 @@ class ListDesktopAuthenticatorsRequest extends ListRequest
 
     protected int $maxPageSize = 500;
 
+    protected bool $cacheable = true;
+
     public function resolveEndpoint(): string
     {
         return '/admin/v1/desktop_authenticators';

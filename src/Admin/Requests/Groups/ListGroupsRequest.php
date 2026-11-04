@@ -16,6 +16,8 @@ class ListGroupsRequest extends ListRequest
 
     protected int $maxPageSize = 100;
 
+    protected bool $cacheable = true;
+
     public function resolveEndpoint(): string
     {
         return '/admin/v1/groups';

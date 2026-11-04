@@ -9,6 +9,8 @@ use spkm\DuoSecurity\Data\Data;
  */
 readonly class AuthResult extends Data
 {
+    protected const HIDDEN = ['trusted_device_token'];
+
     /**
      * @param  array<string, mixed>  $extra
      */

@@ -12,4 +12,9 @@ use spkm\DuoSecurity\DuoConnector;
 class AdminConnector extends DuoConnector
 {
     use HasResources;
+
+    protected function refusedRequests(): string
+    {
+        return 'spkm\\DuoSecurity\\Auth\\Requests\\';
+    }
 }

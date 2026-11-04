@@ -16,6 +16,8 @@ readonly class Admin extends Data
 {
     protected const LISTS = ['webauthncredentials' => WebAuthnCredential::class];
 
+    protected const HIDDEN = ['activation_url'];
+
     /**
      * @param  Collection<int, WebAuthnCredential>|null  $webauthncredentials
      * @param  array<mixed>|null  $admin_units

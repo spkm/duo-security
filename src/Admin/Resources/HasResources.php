@@ -32,7 +32,7 @@ trait HasResources
     }
 
     /**
-     * The Subaccounts endpoints of the Admin API.
+     * The Subaccount Billing endpoints of the Admin API.
      */
     public function billing(): BillingResource
     {
@@ -160,7 +160,7 @@ trait HasResources
     }
 
     /**
-     * The Desktop Authenticators endpoints of the Admin API.
+     * The Shared Device Authentication endpoints of the Admin API.
      */
     public function sharedDeviceAuth(): SharedDeviceAuthResource
     {
@@ -176,7 +176,7 @@ trait HasResources
     }
 
     /**
-     * The U2F Tokens endpoints of the Admin API.
+     * The Hardware Tokens endpoints of the Admin API.
      */
     public function tokens(): TokensResource
     {

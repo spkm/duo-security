@@ -13,6 +13,8 @@ class GetAdministrativeUnitRequest extends GetRequest
 {
     protected ?string $dto = AdministrativeUnit::class;
 
+    protected bool $cacheable = true;
+
     /**
      * @param  array<string, mixed>  $params  Any further parameters.
      */

@@ -13,6 +13,8 @@ class GetBlockedRegisteredDeviceRequest extends GetRequest
 {
     protected ?string $dto = BlockedDevice::class;
 
+    protected bool $cacheable = true;
+
     /**
      * @param  array<string, mixed>  $params  Any further parameters.
      */

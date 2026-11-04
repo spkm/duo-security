@@ -13,6 +13,8 @@ class GetPhoneRequest extends GetRequest
 {
     protected ?string $dto = Phone::class;
 
+    protected bool $cacheable = true;
+
     /**
      * @param  array<string, mixed>  $params  Any further parameters.
      */

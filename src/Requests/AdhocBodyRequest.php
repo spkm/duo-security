@@ -23,10 +23,11 @@ class AdhocBodyRequest extends AdhocRequest implements HasBody
 
     /**
      * @param  array<string, mixed>|Data|JsonSerializable  $body
+     * @param  array<string, string|int>  $segments  The values for the path's {placeholders}.
      */
-    public function __construct(Method $method, string $path, array|Data|JsonSerializable $body = [], string $shape = self::RAW)
+    public function __construct(Method $method, string $path, array|Data|JsonSerializable $body = [], string $shape = self::RAW, array $segments = [])
     {
-        parent::__construct($method, $path, [], $shape);
+        parent::__construct($method, $path, [], $shape, $segments);
 
         $this->payload = $body;
     }

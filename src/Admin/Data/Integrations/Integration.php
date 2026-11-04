@@ -9,6 +9,8 @@ use spkm\DuoSecurity\Data\Data;
  */
 readonly class Integration extends Data
 {
+    protected const HIDDEN = ['secret_key'];
+
     /**
      * @param  array<mixed>|null  $compliance_requirements
      * @param  array<mixed>|null  $business_owners

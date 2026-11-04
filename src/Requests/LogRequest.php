@@ -64,10 +64,30 @@ abstract class LogRequest extends DuoRequest implements Paginatable
     }
 
     /**
+     * Where the window ends for a log paged by time (which Duo gives no maxtime for): the maxtime asked for, as a
+     * Unix timestamp in the endpoint's unit, or null for no end.
+     */
+    public function windowEnd(): ?int
+    {
+        $end = $this->params['maxtime'] ?? null;
+
+        return $end === null ? null : Payload::timestamp($end, $this->millisecondTimes);
+    }
+
+    /**
+     * The query Duo documents: for a log paged by time, mintime alone (it answers the 1000 earliest events after it,
+     * so maxtime and limit are the paginator's to enforce).
+     *
      * @return array<string, mixed>
      */
     protected function defaultQuery(): array
     {
-        return Payload::parameters($this->params, $this->millisecondTimes ? ['mintime', 'maxtime'] : []);
+        $params = $this->params;
+
+        if ($this->pagedBy === self::BY_TIME) {
+            unset($params['maxtime'], $params['limit']);
+        }
+
+        return Payload::parameters($params, $this->millisecondTimes ? ['mintime', 'maxtime'] : []);
     }
 }

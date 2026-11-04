@@ -2,6 +2,7 @@
 
 namespace spkm\DuoSecurity;
 
+use GuzzleHttp\Promise\PromiseInterface;
 use JsonSerializable;
 use LogicException;
 use Psr\Http\Message\RequestInterface;
@@ -11,6 +12,7 @@ use Saloon\Enums\Method;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
 use Saloon\Http\Connector;
+use Saloon\Http\Faking\MockClient;
 use Saloon\Http\PendingRequest;
 use Saloon\Http\Request;
 use Saloon\Http\Response;
@@ -72,7 +74,37 @@ abstract class DuoConnector extends Connector implements HasPagination
      */
     public function credentialsFingerprint(): string
     {
-        return hash('sha256', $this->credentials->apiHostname.'|'.$this->credentials->identity());
+        return $this->credentials->fingerprint();
+    }
+
+    /**
+     * The namespace of the other API's requests, which this connector refuses: they would be signed with the
+     * wrong application's keys and answered 403.
+     */
+    abstract protected function refusedRequests(): string;
+
+    public function send(Request $request, ?MockClient $mockClient = null, ?callable $handleRetry = null): Response
+    {
+        $this->refuseForeign($request);
+
+        return parent::send($request, $mockClient, $handleRetry);
+    }
+
+    public function sendAsync(Request $request, ?MockClient $mockClient = null): PromiseInterface
+    {
+        $this->refuseForeign($request);
+
+        return parent::sendAsync($request, $mockClient);
+    }
+
+    protected function refuseForeign(Request $request): void
+    {
+        if (str_starts_with($request::class, $this->refusedRequests())) {
+            $other = str_contains($this->refusedRequests(), '\\Auth\\') ? 'Auth API' : 'Admin API';
+            $accessor = $other === 'Auth API' ? 'DuoSecurity::authConnector()->send() or DuoSecurity::auth()' : 'DuoSecurity::admin()->send() or DuoSecurity::{resource}()';
+
+            throw new LogicException(class_basename($request).' is an '.$other.' request and cannot be sent with this connector\'s keys; send it with '.$accessor.'.');
+        }
     }
 
     protected function defaultAuth(): ?Authenticator
@@ -128,35 +160,42 @@ abstract class DuoConnector extends Connector implements HasPagination
     }
 
     /**
+     * An ad-hoc GET by path, for an endpoint the package has no request for: DuoSecurity::get('/admin/v1/users/{id}',
+     * ['limit' => 1], ['id' => $userId]). A value for the path goes in $segments, never written into the path.
+     *
      * @param  array<string, mixed>  $query
+     * @param  array<string, string|int>  $segments
      */
-    public function get(string $path, array $query = []): Response
+    public function get(string $path, array $query = [], array $segments = []): Response
     {
-        return $this->send(new AdhocRequest(Method::GET, $path, $query));
+        return $this->send(new AdhocRequest(Method::GET, $path, $query, segments: $segments));
     }
 
     /**
      * @param  array<string, mixed>|Data|JsonSerializable  $body
+     * @param  array<string, string|int>  $segments
      */
-    public function post(string $path, array|Data|JsonSerializable $body = []): Response
+    public function post(string $path, array|Data|JsonSerializable $body = [], array $segments = []): Response
     {
-        return $this->send(new AdhocBodyRequest(Method::POST, $path, $body));
+        return $this->send(new AdhocBodyRequest(Method::POST, $path, $body, segments: $segments));
     }
 
     /**
      * @param  array<string, mixed>|Data|JsonSerializable  $body
+     * @param  array<string, string|int>  $segments
      */
-    public function put(string $path, array|Data|JsonSerializable $body = []): Response
+    public function put(string $path, array|Data|JsonSerializable $body = [], array $segments = []): Response
     {
-        return $this->send(new AdhocBodyRequest(Method::PUT, $path, $body));
+        return $this->send(new AdhocBodyRequest(Method::PUT, $path, $body, segments: $segments));
     }
 
     /**
      * @param  array<string, mixed>  $query
+     * @param  array<string, string|int>  $segments
      */
-    public function delete(string $path, array $query = []): Response
+    public function delete(string $path, array $query = [], array $segments = []): Response
     {
-        return $this->send(new AdhocRequest(Method::DELETE, $path, $query));
+        return $this->send(new AdhocRequest(Method::DELETE, $path, $query, segments: $segments));
     }
 
     /**

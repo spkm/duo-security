@@ -15,6 +15,8 @@ class ListUserWebAuthnCredentialsRequest extends GetRequest
 
     protected string $responseShape = self::LIST;
 
+    protected bool $cacheable = true;
+
     /**
      * @param  array<string, mixed>  $params  Any further parameters.
      */

@@ -25,6 +25,11 @@ class DuoPaginator extends Paginator
 
     protected int|string|null $nextOffset = null;
 
+    /**
+     * Where the first page starts: the offset the request asked for (skip()), else 0.
+     */
+    protected int $startOffset = 0;
+
     protected ?string $lastPageFingerprint = null;
 
     protected ?Response $lastResponse = null;
@@ -38,6 +43,7 @@ class DuoPaginator extends Paginator
 
         $max = $request instanceof ListRequest ? $request->maxPageSize() : null;
         $this->perPageLimit = max(1, min($perPage ?? (int) $this->perPageLimit, $max ?? PHP_INT_MAX));
+        $this->startOffset = $request instanceof ListRequest && is_numeric($request->query()->get('offset')) ? (int) $request->query()->get('offset') : 0;
     }
 
     /**
@@ -73,7 +79,7 @@ class DuoPaginator extends Paginator
     protected function applyPagination(Request $request): Request
     {
         $request->query()->add('limit', $this->perPageLimit);
-        $request->query()->add('offset', $this->nextOffset ?? 0);
+        $request->query()->add('offset', $this->nextOffset ?? $this->startOffset);
 
         return $request;
     }
@@ -126,8 +132,9 @@ class DuoPaginator extends Paginator
             throw new ServerErrorException($response);
         }
 
-        // An endpoint that ignores the offset would answer the same page forever: a repeated page is the end.
-        $fingerprint = sha1((string) json_encode($items));
+        // An endpoint that ignores the offset would answer the same page forever: a page repeated with the same next
+        // offset is the end (two pages alike that lead on differently are both kept).
+        $fingerprint = sha1((string) json_encode([$items, Envelope::nextOffset($response)]));
         $this->lastResponse = $response;
         $this->lastItems = $fingerprint === $this->lastPageFingerprint ? [] : $items;
         $this->lastPageFingerprint = $fingerprint;

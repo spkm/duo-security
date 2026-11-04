@@ -10,6 +10,8 @@ use spkm\DuoSecurity\Data\Data;
  */
 readonly class Enrollment extends Data
 {
+    protected const HIDDEN = ['activation_code', 'activation_url', 'activation_barcode'];
+
     /**
      * @param  array<string, mixed>  $extra
      */

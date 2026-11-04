@@ -89,9 +89,9 @@ class UsersResource extends BaseResource
      *
      * @param  array<string, mixed>  $params  The parameters Duo documents: user_id_list.
      */
-    public function bulkRestoreUsers(array $params = []): mixed
+    public function bulkRestoreUsers(array $params = []): string
     {
-        return $this->fetch(new BulkRestoreUsersRequest($params));
+        return (string) $this->fetch(new BulkRestoreUsersRequest($params));
     }
 
     /**
@@ -139,9 +139,9 @@ class UsersResource extends BaseResource
      *
      * @param  array<string, mixed>  $params  The parameters Duo documents: valid_secs.
      */
-    public function enrollUser(string $username, string $email, array $params = []): mixed
+    public function enrollUser(string $username, string $email, array $params = []): string
     {
-        return $this->fetch(new EnrollUserRequest($username, $email, $params));
+        return (string) $this->fetch(new EnrollUserRequest($username, $email, $params));
     }
 
     /**

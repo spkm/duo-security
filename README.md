@@ -112,7 +112,7 @@ list method takes:
 $page = DuoSecurity::users()->listUsers()->limit(50)->get();                         // Collection<User>
 $all = DuoSecurity::phones()->listPhones()->lazy();                                  // LazyCollection<Phone>
 $byNumber = DuoSecurity::phones()->listPhones(['number' => '+441234567890'])->first();
-$count = DuoSecurity::tokens()->listTokens(['type' => 'yk'])->count();
+$count = DuoSecurity::tokens()->listTokens()->count();                               // from Duo's total, or by reading every page
 
 foreach (DuoSecurity::users()->listUserPhones($userId)->paginate() as $response) {
     $response->dto();                                                                // one page of Phone
@@ -125,8 +125,8 @@ The users, phones, tokens and groups resources also have finders: `find($id)` (n
 A log method gives a `LogQuery`: the window with `between($from, $to)` or `since($from)` (which ends two minutes ago,
 the latest Duo makes available), the order with `oldestFirst()` or `newestFirst()`, the endpoint's filters with
 `withParameter()`, then `get()`, `all()` or `lazy()`. The v2 logs (authentication, authorization, activity,
-telephony) page by the cursor Duo gives; the v1 logs (administrator, offline enrollment) by asking again from the last
-event's time:
+telephony) page by the cursor Duo gives; the v1 logs (administrator, offline enrollment) take only a start time, so
+the package asks again from the last event's time and stops at the window's end itself:
 
 ```php
 $logs = DuoSecurity::logs();
@@ -171,7 +171,10 @@ with a subclass for the ones callers handle differently:
 | `UnauthorizedException` | 401: the keys, signature or date refused; 403: the application lacks the permission, or is of the wrong type |
 | `RateLimitedException` | 429: too many calls of this kind; `retryAfter()` when Duo says how long to wait |
 | `InvalidRequestException` | 400 and the other client errors: a parameter missing or invalid, a duplicate, an operation that failed |
-| `ServerErrorException` | 5xx, a timeout, or a 2xx that isn't the OK envelope Duo always sends |
+| `ServerErrorException` | 5xx, a 408, or a 2xx that isn't the OK envelope Duo always sends |
+
+A `FAIL` envelope Duo sends with a 200 is an error too, by its code, on every path: a resource method, `dto()`,
+`$response->throw()` and `$response->failed()` agree, and nothing is cached or retried as a success.
 
 ```php
 try {
@@ -196,7 +199,10 @@ applies it.
 
 The suite checks the signer against the worked examples in Duo's documentation, the vectors in Duo's own
 `duo_api_php` client, and that client itself (a development dependency only): every request shape is signed by both
-and the signatures compared. Should Duo publish a new signing version, change `DuoSigner` (its `VERSION` and the
+and the signatures compared. The secret key is held beside the credentials rather than in them, so no dump (`dd()`,
+`var_export`, a cast to array) of a connector or of an exception that reaches it can show the key; the models'
+secrets (an integration's `secret_key`, an enrollment's activation code, a trusted device token) are left out of
+`toArray()`, JSON and dumps unless asked for with `toArray(withHidden: true)`. Should Duo publish a new signing version, change `DuoSigner` (its `VERSION` and the
 lines it describes) and add the new vectors to `tests/Fixtures/signing-vectors.json` beside the current ones; when a
 signature is refused (401, code 40103), Duo's [HMAC Debugger](https://duosecurity.github.io/duo_hmac_debugger/) shows
 what it computed. The clock matters too: Duo refuses a request dated more than five minutes from its own.
@@ -249,12 +255,28 @@ be repeated than lost when the connection drops before Duo answers can ask for t
 DuoSecurity::send((new CreateUserBypassCodesRequest($userId, ['count' => 1]))->retryingDroppedConnections());
 ```
 
-Anything the resources don't cover can be called by path, from the root of the API hostname:
+Anything the resources don't cover can be called by path, from the root of the API hostname. A value that goes in
+the path is given for a `{placeholder}`, never written into the path, so it is encoded and can't carry the request
+somewhere else:
 
 ```php
 DuoSecurity::get('/admin/v1/users', ['username' => 'jsmith'])->json('response');
-DuoSecurity::post('/admin/v1/users/'.$userId.'/bypass_codes', ['count' => 1]);
+DuoSecurity::post('/admin/v1/users/{id}/bypass_codes', ['count' => 1], ['id' => $userId]);
 ```
+
+The cache, when on, holds only reads of records that don't change under the reader (users, groups, phones, tokens,
+policies, settings and the like), never a secret, a status being polled, a report, a log or the Auth API; entries are
+JSON, keyed with the application's keys, so a connector with other keys is never served another's answers.
+
+The facade's `send()`, `get()` and the rest go to the Admin API; an Auth API request sent that way is refused rather
+than signed with the wrong keys (`DuoSecurity::authConnector()->send()` takes it). The service is a singleton, so
+the connectors built from config live for the process: a long-running worker that changes `duo-security` config at
+runtime should build its own `AdminConnector` from a `Credentials`.
+
+A connection that can't be made or times out surfaces as Saloon's `FatalRequestException`, not a `DuoApiException`
+(which is Duo's answer); catch both where the distinction matters. Applications that add Saloon's Laravel plugin and
+Telescope should hide the parameters that carry secrets (`passcode`, `codes`, `secret`, `trusted_device_token`), as
+Telescope records client requests.
 
 ## Testing
 

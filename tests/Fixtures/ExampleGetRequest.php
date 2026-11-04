@@ -9,6 +9,8 @@ class ExampleGetRequest extends GetRequest
 {
     protected ?string $dto = ExampleData::class;
 
+    protected bool $cacheable = true;
+
     /**
      * @param  array<string, mixed>  $params
      */

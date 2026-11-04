@@ -91,7 +91,7 @@ final class DuoSigner
     {
         $canonical = self::canonical($date, $method, $credentials->apiHostname, $path, $query, $body, $xDuoHeaders);
 
-        return self::authorization($credentials->integrationKey, self::signature($credentials->secretKey(), $canonical));
+        return self::authorization($credentials->integrationKey, $credentials->signature($canonical));
     }
 
     /**

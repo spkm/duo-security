@@ -17,6 +17,8 @@ class ListUserPhonesRequest extends ListRequest
 
     protected int $maxPageSize = 500;
 
+    protected bool $cacheable = true;
+
     /**
      * @param  array<string, mixed>  $params  The parameters Duo documents: limit, offset.
      */

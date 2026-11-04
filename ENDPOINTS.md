@@ -9,16 +9,16 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 ### Admin API
 
 - [`subaccounts()`](#subaccounts) (3)
-- [`billing()`](#billing) (6)
+- [`billing()`](#subaccount-billing) (6)
 - [`users()`](#users) (27)
 - [`bulk()`](#bulk) (1)
 - [`groups()`](#groups) (6)
 - [`identityVerification()`](#identity-verification) (3)
 - [`phones()`](#phones) (10)
-- [`tokens()`](#tokens) (6)
-- [`webAuthnCredentials()`](#web-authn-credentials) (3)
+- [`tokens()`](#hardware-tokens) (6)
+- [`webAuthnCredentials()`](#webauthn-credentials) (3)
 - [`desktopAuthenticators()`](#desktop-authenticators) (3)
-- [`sharedDeviceAuth()`](#shared-device-auth) (5)
+- [`sharedDeviceAuth()`](#shared-device-authentication) (5)
 - [`bypassCodes()`](#bypass-codes) (3)
 - [`integrations()`](#integrations) (19)
 - [`policies()`](#policies) (10)
@@ -32,7 +32,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 - [`trustMonitor()`](#trust-monitor) (1)
 - [`settings()`](#settings) (5)
 - [`branding()`](#branding) (9)
-- [`info()`](#info) (5)
+- [`info()`](#account-info) (5)
 
 ### Auth API
 
@@ -42,7 +42,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Subaccounts
 
-`DuoSecurity::subaccounts()`, the Subaccounts section.
+`DuoSecurity::subaccounts()`, the Subaccounts section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -50,9 +50,9 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 | POST | `/accounts/v1/account/create` | `CreateSubaccountRequest` | Subaccount |
 | POST | `/accounts/v1/account/delete` | `DeleteSubaccountRequest` | bool |
 
-### Billing
+### Subaccount Billing
 
-`DuoSecurity::billing()`, the Subaccounts section.
+`DuoSecurity::billing()`, the Subaccounts section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -65,19 +65,19 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Users
 
-`DuoSecurity::users()`, the Users section.
+`DuoSecurity::users()`, the Users section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
 | GET | `/admin/v1/users` | `ListUsersRequest` | ListQuery<User> |
 | POST | `/admin/v1/users` | `CreateUserRequest` | User |
 | POST | `/admin/v1/users/bulk_create` | `BulkCreateUsersRequest` | Collection<User> |
-| POST | `/admin/v1/users/bulk_restore` | `BulkRestoreUsersRequest` | mixed |
+| POST | `/admin/v1/users/bulk_restore` | `BulkRestoreUsersRequest` | string |
 | POST | `/admin/v1/users/bulk_send_to_trash` | `BulkSendUsersToTrashRequest` | mixed |
 | GET | `/admin/v1/users/{user_id}` | `GetUserRequest` | User |
 | POST | `/admin/v1/users/{user_id}` | `ModifyUserRequest` | User |
 | DELETE | `/admin/v1/users/{user_id}` | `DeleteUserRequest` | bool |
-| POST | `/admin/v1/users/enroll` | `EnrollUserRequest` | mixed |
+| POST | `/admin/v1/users/enroll` | `EnrollUserRequest` | string |
 | GET | `/admin/v1/users/{user_id}/bypass_codes` | `ListUserBypassCodesRequest` | ListQuery<BypassCode> |
 | POST | `/admin/v1/users/{user_id}/bypass_codes` | `CreateUserBypassCodesRequest` | Collection |
 | GET | `/admin/v1/users/{user_id}/groups` | `ListUserGroupsRequest` | ListQuery<Group> |
@@ -99,7 +99,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Bulk
 
-`DuoSecurity::bulk()`, the Bulk Operations section.
+`DuoSecurity::bulk()`, the Bulk Operations section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -107,7 +107,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Groups
 
-`DuoSecurity::groups()`, the Groups section.
+`DuoSecurity::groups()`, the Groups section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -120,7 +120,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Identity Verification
 
-`DuoSecurity::identityVerification()`, the Identity Verification section.
+`DuoSecurity::identityVerification()`, the Identity Verification section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -130,7 +130,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Phones
 
-`DuoSecurity::phones()`, the Phones section.
+`DuoSecurity::phones()`, the Phones section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -145,9 +145,9 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 | POST | `/admin/v1/phones/{phone_id}/send_sms_installation` | `SendPhoneSmsInstallationRequest` | SmsInstallation |
 | POST | `/admin/v1/phones/{phone_id}/send_sms_passcodes` | `SendPhoneSmsPasscodesRequest` | bool |
 
-### Tokens
+### Hardware Tokens
 
-`DuoSecurity::tokens()`, the Tokens section.
+`DuoSecurity::tokens()`, the Tokens section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -158,9 +158,9 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 | DELETE | `/admin/v1/tokens/{token_id}` | `DeleteTokenRequest` | bool |
 | GET | `/admin/v1/u2ftokens` | `ListU2fTokensRequest` | Collection (deprecated) |
 
-### Web Authn Credentials
+### WebAuthn Credentials
 
-`DuoSecurity::webAuthnCredentials()`, the WebAuthn Credentials section.
+`DuoSecurity::webAuthnCredentials()`, the WebAuthn Credentials section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -170,7 +170,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Desktop Authenticators
 
-`DuoSecurity::desktopAuthenticators()`, the Desktop Authenticators section.
+`DuoSecurity::desktopAuthenticators()`, the Desktop Authenticators section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -178,9 +178,9 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 | GET | `/admin/v1/desktop_authenticators/{dakey}` | `GetDesktopAuthenticatorRequest` | DesktopAuthenticator |
 | DELETE | `/admin/v1/desktop_authenticators/{dakey}` | `DeleteDesktopAuthenticatorRequest` | bool |
 
-### Shared Device Auth
+### Shared Device Authentication
 
-`DuoSecurity::sharedDeviceAuth()`, the Desktop Authenticators section.
+`DuoSecurity::sharedDeviceAuth()`, the Desktop Authenticators section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -192,7 +192,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Bypass Codes
 
-`DuoSecurity::bypassCodes()`, the Bypass Codes section.
+`DuoSecurity::bypassCodes()`, the Bypass Codes section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -202,7 +202,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Integrations
 
-`DuoSecurity::integrations()`, the Integrations section.
+`DuoSecurity::integrations()`, the Integrations section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -228,7 +228,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Policies
 
-`DuoSecurity::policies()`, the Policies section.
+`DuoSecurity::policies()`, the Policies section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -245,7 +245,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Endpoints
 
-`DuoSecurity::endpoints()`, the Endpoints section.
+`DuoSecurity::endpoints()`, the Endpoints section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -254,7 +254,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Registered Devices
 
-`DuoSecurity::registeredDevices()`, the Registered Devices section.
+`DuoSecurity::registeredDevices()`, the Registered Devices section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -270,7 +270,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Passport
 
-`DuoSecurity::passport()`, the Passport section.
+`DuoSecurity::passport()`, the Passport section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -279,7 +279,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Administrators
 
-`DuoSecurity::administrators()`, the Administrators section.
+`DuoSecurity::administrators()`, the Administrators section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -305,7 +305,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Admin Roles
 
-`DuoSecurity::adminRoles()`, the Admin Roles section.
+`DuoSecurity::adminRoles()`, the Admin Roles section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -314,7 +314,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Administrative Units
 
-`DuoSecurity::administrativeUnits()`, the Administrative Units section.
+`DuoSecurity::administrativeUnits()`, the Administrative Units section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -332,7 +332,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Logs
 
-`DuoSecurity::logs()`, the Logs section.
+`DuoSecurity::logs()`, the Logs section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -345,7 +345,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Trust Monitor
 
-`DuoSecurity::trustMonitor()`, the Trust Monitor section.
+`DuoSecurity::trustMonitor()`, the Trust Monitor section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -353,7 +353,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Settings
 
-`DuoSecurity::settings()`, the Settings section.
+`DuoSecurity::settings()`, the Settings section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -365,7 +365,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Branding
 
-`DuoSecurity::branding()`, the Custom Branding section.
+`DuoSecurity::branding()`, the Custom Branding section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -379,9 +379,9 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 | GET | `/admin/v1/branding/custom_messaging` | `GetCustomMessagingRequest` | CustomMessaging |
 | POST | `/admin/v1/branding/custom_messaging` | `ModifyCustomMessagingRequest` | CustomMessaging |
 
-### Info
+### Account Info
 
-`DuoSecurity::info()`, the Account Info section.
+`DuoSecurity::info()`, the Account Info section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -395,7 +395,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 
 ### Auth
 
-`DuoSecurity::auth()`, the Auth API section.
+`DuoSecurity::auth()`, the Auth API section of the documentation.
 
 | Method | Path | Request | Returns |
 |---|---|---|---|
@@ -403,7 +403,7 @@ Admin API resources are reached from the facade, `DuoSecurity::{resource}()`; th
 | GET | `/auth/v2/check` | `CheckRequest` | ServerTime |
 | GET | `/auth/v2/logo` | `LogoRequest` | string |
 | POST | `/auth/v2/enroll` | `EnrollRequest` | Enrollment |
-| POST | `/auth/v2/enroll_status` | `EnrollStatusRequest` | mixed |
+| POST | `/auth/v2/enroll_status` | `EnrollStatusRequest` | string |
 | POST | `/auth/v2/preauth` | `PreauthRequest` | PreauthResult |
 | POST | `/auth/v2/auth` | `AuthRequest` | AuthResult |
 | GET | `/auth/v2/auth_status` | `AuthStatusRequest` | AuthStatus |

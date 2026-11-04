@@ -18,6 +18,8 @@ class ListPoliciesRequest extends ListRequest
 
     protected int $maxPageSize = 100;
 
+    protected bool $cacheable = true;
+
     public function resolveEndpoint(): string
     {
         return '/admin/v2/policies';

@@ -42,7 +42,7 @@ final class Envelope
      */
     public static function succeeded(Response $response): bool
     {
-        if (! $response->successful()) {
+        if ($response->status() < 200 || $response->status() >= 300) {
             return false;
         }
 

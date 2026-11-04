@@ -22,7 +22,7 @@ it('sends the method and path Duo documents, signed, and maps the response', fun
         ->and($request->responseShape())->toBe($shape)
         ->and($request instanceof Paginatable)->toBe($paginatable)
         ->and($request instanceof HasBody)->toBe($hasBody)
-        ->and($request->isSafe())->toBe($method === 'GET');
+        ->and($request->isSafe())->toBe($method === 'GET' || in_array(class_basename($class), ['ListSubaccountsRequest', 'EnrollStatusRequest'], true));
 
     $sample = ['user_id' => 'DU1', 'name' => 'x'];
     $mockClient = FakeDuo::respondWith([$class => match ($shape) {

@@ -13,6 +13,8 @@ class GetAdminRoleRequest extends GetRequest
 {
     protected ?string $dto = AdminRole::class;
 
+    protected bool $cacheable = true;
+
     /**
      * @param  array<string, mixed>  $params  Any further parameters.
      */

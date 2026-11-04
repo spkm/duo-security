@@ -65,9 +65,9 @@ class AuthResource extends BaseResource
      *
      * @param  array<string, mixed>  $params  Any further parameters.
      */
-    public function enrollStatus(string $userId, string $activationCode, array $params = []): mixed
+    public function enrollStatus(string $userId, string $activationCode, array $params = []): string
     {
-        return $this->fetch(new EnrollStatusRequest($userId, $activationCode, $params));
+        return (string) $this->fetch(new EnrollStatusRequest($userId, $activationCode, $params));
     }
 
     /**

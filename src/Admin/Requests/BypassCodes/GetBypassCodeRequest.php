@@ -13,6 +13,8 @@ class GetBypassCodeRequest extends GetRequest
 {
     protected ?string $dto = BypassCode::class;
 
+    protected bool $cacheable = true;
+
     /**
      * @param  array<string, mixed>  $params  Any further parameters.
      */

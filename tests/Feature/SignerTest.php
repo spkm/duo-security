@@ -114,7 +114,7 @@ it('refuses credentials without a key or a hostname, and never shows or serialis
         ->and(fn () => new Credentials('ikey', 'skey', ''))->toThrow(InvalidArgumentException::class)
         ->and(fn () => new Credentials('ikey', 'skey', 'https://'))->toThrow(InvalidArgumentException::class)
         ->and($credentials->identity())->toBe('ikey')
-        ->and($credentials->secretKey())->toBe('skey')
+        ->and($credentials->signature('x'))->toBe(hash_hmac('sha512', 'x', 'skey'))
         ->and($credentials->__debugInfo())->toBe(['integrationKey' => 'ikey', 'secretKey' => '[redacted]', 'apiHostname' => 'api-xxxxxxxx.duosecurity.com'])
         ->and(print_r($credentials, true))->not->toContain('skey')
         ->and(fn () => serialize($credentials))->toThrow(LogicException::class);

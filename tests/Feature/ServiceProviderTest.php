@@ -102,10 +102,10 @@ it('builds a named connection\'s connectors from duo-security.connections', func
 });
 
 it('says which key is missing from config', function () {
-    configureDuo(['integration_key' => '', 'secret_key' => 's', 'api_hostname' => 'h']);
+    configureDuo(['integration_key' => '', 'secret_key' => 's', 'api_hostname' => FakeDuo::HOST]);
     expect(fn () => DuoSecurity::admin())->toThrow(InvalidArgumentException::class, "The default Duo connection's Admin API needs an integration_key.");
 
-    configureDuo(['integration_key' => 'i', 'secret_key' => null, 'api_hostname' => 'h']);
+    configureDuo(['integration_key' => 'i', 'secret_key' => null, 'api_hostname' => FakeDuo::HOST]);
     expect(fn () => DuoSecurity::admin())->toThrow(InvalidArgumentException::class, 'needs a secret_key.');
 
     configureDuo(['integration_key' => 'i', 'secret_key' => 's', 'api_hostname' => null]);
@@ -117,7 +117,7 @@ it('says which key is missing from config', function () {
 });
 
 it('refuses a call neither the service nor the connector has', function () {
-    configureDuo(['integration_key' => 'i', 'secret_key' => 's', 'api_hostname' => 'h']);
+    configureDuo(['integration_key' => 'i', 'secret_key' => 's', 'api_hostname' => FakeDuo::HOST]);
 
     expect(fn () => DuoSecurity::nothingLikeThis())->toThrow(BadMethodCallException::class);
 });
