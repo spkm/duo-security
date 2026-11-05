@@ -295,7 +295,7 @@ Pull requests are welcome. Run `composer format`, `composer analyse` and `compos
 
 ## Security
 
-If you discover a security issue, email hello@spkmitchell.co.uk rather than opening an issue.
+If you discover a security issue, please don't open a public issue. [Report it privately](https://github.com/spkm/duo-security/security/advisories/new) through GitHub instead. See [SECURITY.md](SECURITY.md) for details.
 
 ## Credits
 
