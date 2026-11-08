@@ -10,3 +10,4 @@ composer.lock
 *.pem
 *.key
 auth.json
+.claude/settings.local.json
